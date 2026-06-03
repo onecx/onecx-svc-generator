@@ -11,7 +11,7 @@ quarkus.datasource.jdbc.min-size=10
 quarkus.datasource.metrics.enabled=true
 
 # --- dev defaults ---
-%dev.quarkus.datasource.devservices.db-name={{dbName}}
+%dev.quarkus.datasource.jdbc.url=${DB_URL:jdbc:postgresql://postgresdb:5432/{{dbName}}?sslmode=disable}
 %dev.quarkus.datasource.devservices.port=5432
 %dev.quarkus.datasource.username=onecx-dev
 %dev.quarkus.datasource.password=onecx-dev
@@ -44,6 +44,8 @@ tkit.rs.context.token.header-param=apm-principal-token
 %dev.quarkus.otel.sdk.disabled=true
 %dev.quarkus.oidc-client.discovery-enabled=false
 %dev.tkit.security.auth.enabled=false
+%dev.tkit.rs.context.tenant-id.mock.enabled=false
+%dev.tkit.rs.context.tenant-id.enabled=false
 
 # --- test settings ---
 %test.tkit.rs.context.token.header-param=apm-principal-token
