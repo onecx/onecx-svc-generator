@@ -202,6 +202,7 @@ public class AddEntityCommand implements Runnable {
             ctx.put("testCreateDtoBody", models.buildTestCreateDtoBody(fields, relations, entity + "DTO"));
             ctx.put("testUpdateDtoBody", models.buildTestUpdateDtoBody(fields, relations, entity + "DTO"));
             ctx.put("testSearchCriteriaBody", models.buildTestSearchCriteriaBody(fields, entity + "SearchCriteriaDTO"));
+            ctx.put("testSearchSeedBody", models.buildTestSearchSeedBody(fields));
             ctx.put("testExternalSearchCriteriaBody", models.buildTestExternalSearchCriteriaBody(fields, entity + "SearchCriteriaDTOV1"));
             ctx.put(
                     "testInternalControllerAdditionalMethods",

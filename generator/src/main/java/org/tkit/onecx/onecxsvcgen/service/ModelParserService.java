@@ -296,9 +296,9 @@ public class ModelParserService {
         String attrConst = dbName(target.name()).toUpperCase();
 
         if ("String".equals(target.type())) {
-            sb.append("            if (").append(getter).append(" != null && !").append(getter).append(".isBlank()) {\n");
-            sb.append("                addSearchStringPredicate(predicates, cb, root.get(" + entity + "_." + attrConst + "), ").append(getter).append(");\n");
-            sb.append("            }\n");
+            sb.append("            addSearchStringPredicate(predicates, cb, root.get(" + entity + "_." + attrConst + "), ")
+                    .append(getter)
+                    .append(");\n");
         } else {
             sb.append("            if (").append(getter).append(" != null) {\n");
             sb.append("                predicates.add(cb.equal(root.get(" + entity + "_." + attrConst + "), ").append(getter).append("));\n");
@@ -325,30 +325,13 @@ public class ModelParserService {
                 continue;
             }
 
-            sb.append("    @Mapping(target = \"id\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"tenantId\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"creationDate\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"creationUser\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"modificationDate\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"modificationUser\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"controlTraceabilityManual\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"modificationCount\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"persisted\", ignore = true)\n");
-            sb.append("    ")
+            sb.append("    @BeanMapping(ignoreByDefault = true)\n")
                     .append(modelPackage).append(".").append(target)
                     .append(" fromDto(")
                     .append(generatedModelPackage).append(".").append(target).append("DTO dto);\n\n");
 
-            sb.append("    @Mapping(target = \"id\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"tenantId\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"creationDate\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"creationUser\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"modificationDate\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"modificationUser\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"controlTraceabilityManual\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"modificationCount\", ignore = true)\n");
-            sb.append("    @Mapping(target = \"persisted\", ignore = true)\n");
-            sb.append("    void update(")
+            sb.append("    @BeanMapping(ignoreByDefault = true)\n")
+                    .append("    void update(")
                     .append(generatedModelPackage).append(".").append(target).append("DTO dto, ")
                     .append("@org.mapstruct.MappingTarget ")
                     .append(modelPackage).append(".").append(target)
@@ -930,7 +913,7 @@ public class ModelParserService {
 
         for (FieldDef field : fields) {
             if ("name".equals(field.name())) {
-                continue; // unikamy duplikacji
+                continue; // to not duplicate
             }
 
             sb.append(",\n                  \"")

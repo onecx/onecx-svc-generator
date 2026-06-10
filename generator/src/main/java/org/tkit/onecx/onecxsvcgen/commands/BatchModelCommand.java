@@ -173,6 +173,7 @@ public class BatchModelCommand implements Runnable {
                 ctx.put("testCreateDtoBody", models.buildTestCreateDtoBody(entityDef.fields(), entityDef.relations(), entity + "DTO"));
                 ctx.put("testUpdateDtoBody", models.buildTestUpdateDtoBody(entityDef.fields(), entityDef.relations(), entity + "DTO"));
                 ctx.put("testSearchCriteriaBody", models.buildTestSearchCriteriaBody(entityDef.fields(), entity + "SearchCriteriaDTO"));
+                ctx.put("testSearchSeedBody", models.buildTestSearchSeedBody(entityDef.fields()));
                 ctx.put("testExternalSearchCriteriaBody", models.buildTestExternalSearchCriteriaBody(entityDef.fields(), entity + "SearchCriteriaDTOV1"));
                 ctx.put(
                         "testInternalControllerAdditionalMethods",

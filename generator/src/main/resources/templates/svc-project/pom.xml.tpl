@@ -9,7 +9,6 @@
         <version>{{parentVersion}}</version>
     </parent>
 
-    <groupId>{{group}}</groupId>
     <artifactId>{{name}}</artifactId>
     <version>{{projectVersion}}</version>
     {{packagingSection}}

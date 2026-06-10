@@ -4,7 +4,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: /api
+  - url: http://{{name}}:8080/api
 
 paths: {}
 
