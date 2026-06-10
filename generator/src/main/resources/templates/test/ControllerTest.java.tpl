@@ -228,7 +228,7 @@ class {{entity}}ControllerTest extends AbstractTest {
     void search{{resourceOperationPlural}}ByNameShouldUsePredicateAndNormalizeNegativePageNumber() {
         String request = """
                 {
-                  "name": "{{entityField}}-search-by-name"
+                  "name": "{{entityField}}-search-by-name"{{testSearchSeedBody}}
                 }
                 """;
 

@@ -717,12 +717,16 @@ public class ModelParserService {
 
         StringBuilder sb = new StringBuilder();
 
-        RelationDef relation = firstResolvableSingleRelation(relations);
+        List<RelationDef> resolvableRelations = relations.stream()
+                .filter(this::isResolvableSingleRelation)
+                .toList();
 
-        if (relation != null) {
+        for (RelationDef relation : resolvableRelations) {
+
             String upperRelation = upperFirst(relation.field());
             String relationHelper = "create" + upperRelation + "IdThrough" + entity;
 
+            // CREATE WITHOUT
             sb.append("    @Test\n");
             sb.append("    void create").append(entity).append("Without").append(upperRelation).append("ShouldSucceed() {\n");
             sb.append(buildRequestAssignment("request", fields, null, null, Collections.emptyMap()));
@@ -740,6 +744,7 @@ public class ModelParserService {
             sb.append("        assertNotNull(id);\n");
             sb.append("    }\n\n");
 
+            // CREATE WITH EXISTING
             sb.append("    @Test\n");
             sb.append("    void create").append(entity).append("WithExisting").append(upperRelation).append("IdShouldReuseExisting")
                     .append(upperRelation).append("() {\n");
@@ -749,7 +754,7 @@ public class ModelParserService {
                     fields,
                     relation,
                     relationPayloadById("%s"),
-                    Collections.emptyMap()).replace("\"%s\"", "\"%s\""));
+                    Collections.emptyMap()));
             sb.append("        request = request.formatted(relationId);\n\n");
             sb.append("        String entityId = given()\n");
             sb.append("                .auth().oauth2(token)\n");
@@ -774,6 +779,7 @@ public class ModelParserService {
             sb.append("        assertEquals(relationId, returnedRelationId);\n");
             sb.append("    }\n\n");
 
+            // CREATE WITH NEW
             sb.append("    @Test\n");
             sb.append("    void create").append(entity).append("WithNew").append(upperRelation).append("ShouldCreateNested")
                     .append(upperRelation).append("() {\n");
@@ -801,6 +807,7 @@ public class ModelParserService {
             sb.append("        assertNotNull(returnedRelationId);\n");
             sb.append("    }\n\n");
 
+            // UPDATE WITHOUT
             sb.append("    @Test\n");
             sb.append("    void update").append(entity).append("Without").append(upperRelation).append("ShouldSucceed() {\n");
             sb.append("        String entityId = create").append(entity).append("AndReturnId();\n\n");
@@ -816,6 +823,7 @@ public class ModelParserService {
             sb.append("                .statusCode(200);\n");
             sb.append("    }\n\n");
 
+            // UPDATE WITH EXISTING
             sb.append("    @Test\n");
             sb.append("    void update").append(entity).append("WithExisting").append(upperRelation).append("IdShouldReuseExisting")
                     .append(upperRelation).append("() {\n");
@@ -826,7 +834,7 @@ public class ModelParserService {
                     fields,
                     relation,
                     relationPayloadById("%s"),
-                    updatedOverrides(fields)).replace("\"%s\"", "\"%s\""));
+                    updatedOverrides(fields)));
             sb.append("        request = request.formatted(relationId);\n\n");
             sb.append("        given()\n");
             sb.append("                .auth().oauth2(token)\n");
@@ -849,6 +857,7 @@ public class ModelParserService {
             sb.append("        assertEquals(relationId, returnedRelationId);\n");
             sb.append("    }\n\n");
 
+            // UPDATE WITH NEW
             sb.append("    @Test\n");
             sb.append("    void update").append(entity).append("WithNew").append(upperRelation).append("ShouldCreateNested")
                     .append(upperRelation).append("() {\n");
@@ -875,7 +884,7 @@ public class ModelParserService {
             sb.append("        assertNotNull(returnedRelationId);\n");
             sb.append("    }\n\n");
 
-            // blank id → treated as new nested object (covers isBlank() == true branch in create resolver)
+            // CREATE BLANK
             sb.append("    @Test\n");
             sb.append("    void create").append(entity).append("WithBlank").append(upperRelation).append("IdShouldCreateNested")
                     .append(upperRelation).append("() {\n");
@@ -894,7 +903,7 @@ public class ModelParserService {
             sb.append("        assertNotNull(entityId);\n");
             sb.append("    }\n\n");
 
-            // blank id on update → treated as new nested object (covers isBlank() == true branch in update resolver)
+            // UPDATE BLANK
             sb.append("    @Test\n");
             sb.append("    void update").append(entity).append("WithBlank").append(upperRelation).append("IdShouldCreateNested")
                     .append(upperRelation).append("() {\n");
@@ -910,6 +919,24 @@ public class ModelParserService {
             sb.append("                .then()\n");
             sb.append("                .statusCode(200);\n");
             sb.append("    }\n\n");
+        }
+
+        return sb.toString();
+    }
+
+    public String buildTestSearchSeedBody(List<FieldDef> fields) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (FieldDef field : fields) {
+            if ("name".equals(field.name())) {
+                continue; // unikamy duplikacji
+            }
+
+            sb.append(",\n                  \"")
+                    .append(field.name())
+                    .append("\": ")
+                    .append(jsonLiteral(field.type(), false));
         }
 
         return sb.toString();
