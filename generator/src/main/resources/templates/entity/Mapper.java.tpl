@@ -15,16 +15,30 @@ import java.util.stream.Collectors;
 @Mapper(uses = { OffsetDateTimeMapper.class })
 public interface {{entity}}Mapper {
 
-    @BeanMapping(ignoreByDefault = true)
     {{generatedDto}} toDto({{entity}} entity);
 
-    @BeanMapping(ignoreByDefault = true)
     {{generatedPageResultDto}} toPageResultDto(PageResult<{{entity}}> page);
 
-    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "creationUser", ignore = true)
+    @Mapping(target = "modificationDate", ignore = true)
+    @Mapping(target = "modificationUser", ignore = true)
+    @Mapping(target = "controlTraceabilityManual", ignore = true)
+    @Mapping(target = "modificationCount", ignore = true)
+    @Mapping(target = "persisted", ignore = true)
     {{entity}} fromDto({{generatedDto}} dto);
 
-    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "creationUser", ignore = true)
+    @Mapping(target = "modificationDate", ignore = true)
+    @Mapping(target = "modificationUser", ignore = true)
+    @Mapping(target = "controlTraceabilityManual", ignore = true)
+    @Mapping(target = "modificationCount", ignore = true)
+    @Mapping(target = "persisted", ignore = true)
     void update({{generatedDto}} dto, @MappingTarget {{entity}} entity);
 
 {{relationMappingMethods}}

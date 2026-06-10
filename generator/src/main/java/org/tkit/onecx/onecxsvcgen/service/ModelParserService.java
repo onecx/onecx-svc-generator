@@ -325,12 +325,29 @@ public class ModelParserService {
                 continue;
             }
 
-            sb.append("    @BeanMapping(ignoreByDefault = true)\n")
+            sb.append("    @Mapping(target = \"id\", ignore = true)\n")
+                    .append("    @Mapping(target = \"tenantId\", ignore = true)\n")
+                    .append("    @Mapping(target = \"creationDate\", ignore = true)\n")
+                    .append("    @Mapping(target = \"creationUser\", ignore = true)\n")
+                    .append("    @Mapping(target = \"modificationDate\", ignore = true)\n")
+                    .append("    @Mapping(target = \"modificationUser\", ignore = true)\n")
+                    .append("    @Mapping(target = \"controlTraceabilityManual\", ignore = true)\n")
+                    .append("    @Mapping(target = \"modificationCount\", ignore = true)\n")
+                    .append("    @Mapping(target = \"persisted\", ignore = true)\n")
+                    .append("    ")
                     .append(modelPackage).append(".").append(target)
                     .append(" fromDto(")
                     .append(generatedModelPackage).append(".").append(target).append("DTO dto);\n\n");
 
-            sb.append("    @BeanMapping(ignoreByDefault = true)\n")
+            sb.append("    @Mapping(target = \"id\", ignore = true)\n")
+                    .append("    @Mapping(target = \"tenantId\", ignore = true)\n")
+                    .append("    @Mapping(target = \"creationDate\", ignore = true)\n")
+                    .append("    @Mapping(target = \"creationUser\", ignore = true)\n")
+                    .append("    @Mapping(target = \"modificationDate\", ignore = true)\n")
+                    .append("    @Mapping(target = \"modificationUser\", ignore = true)\n")
+                    .append("    @Mapping(target = \"controlTraceabilityManual\", ignore = true)\n")
+                    .append("    @Mapping(target = \"modificationCount\", ignore = true)\n")
+                    .append("    @Mapping(target = \"persisted\", ignore = true)\n")
                     .append("    void update(")
                     .append(generatedModelPackage).append(".").append(target).append("DTO dto, ")
                     .append("@org.mapstruct.MappingTarget ")
@@ -1012,12 +1029,12 @@ public class ModelParserService {
             sb.append("                .post(\"/v1/").append(resourcePath).append("/search\")\n");
             sb.append("                .then()\n");
             sb.append("                .statusCode(200)\n");
-        sb.append("                .extract()\n");
-        sb.append("                .body()\n");
-        sb.append("                .jsonPath()\n");
-        sb.append("                .getList(\"stream\");\n\n");
-        sb.append("        assertNotNull(result);\n");
-        sb.append("    }\n\n");
+            sb.append("                .extract()\n");
+            sb.append("                .body()\n");
+            sb.append("                .jsonPath()\n");
+            sb.append("                .getList(\"stream\");\n\n");
+            sb.append("        assertNotNull(result);\n");
+            sb.append("    }\n\n");
         }
 
         // numeric-field external tests removed for same reason as internal tests above.
