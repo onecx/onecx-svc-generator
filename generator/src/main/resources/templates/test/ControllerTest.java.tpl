@@ -219,5 +219,6 @@ class {{entity}}ControllerTest extends AbstractTest {
                 .extract()
                 .path("id");
     }
+{{testInternalControllerAdditionalMethods}}
 {{testInternalControllerHelperMethods}}
 }

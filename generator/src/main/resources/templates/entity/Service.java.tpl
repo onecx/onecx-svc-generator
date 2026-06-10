@@ -13,6 +13,7 @@ public class {{entity}}Service {
 
     @Inject
     {{entity}}Mapper mapper;
+    
 {{relationDaoInjections}}
     public {{entity}} create({{generatedDto}} dto) {
         {{entity}} entity = mapper.fromDto(dto);

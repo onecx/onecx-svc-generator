@@ -100,19 +100,20 @@ public class OpenApiService {
         Map<String, Object> schema = createEmptySchema();
         Map<String, Object> properties = (Map<String, Object>) schema.get("properties");
 
+        // preserve ordering to match existing OpenAPI source (description/format/default/type order)
         Map<String, Object> pageNumberProps = new LinkedHashMap<>();
-        pageNumberProps.put("type", "integer");
-        pageNumberProps.put("format", "int32");
         pageNumberProps.put("description", "The number of page.");
+        pageNumberProps.put("format", "int32");
         pageNumberProps.put("default", 0);
+        pageNumberProps.put("type", "integer");
         properties.put("pageNumber", pageNumberProps);
 
         Map<String, Object> pageSizeProps = new LinkedHashMap<>();
-        pageSizeProps.put("type", "integer");
         pageSizeProps.put("format", "int32");
-        pageSizeProps.put("description", "The size of page");
         pageSizeProps.put("default", 100);
+        pageSizeProps.put("description", "The size of page");
         pageSizeProps.put("maximum", 1000);
+        pageSizeProps.put("type", "integer");
         properties.put("pageSize", pageSizeProps);
 
         for (FieldDef field : fields) {

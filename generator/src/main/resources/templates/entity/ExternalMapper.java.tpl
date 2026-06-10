@@ -10,7 +10,5 @@ public interface {{entity}}Mapper {
 
     {{generatedExternalDto}} toDto({{entity}} entity);
 
-    {{generatedInternalSearchCriteria}} toCriteria({{generatedExternalSearchCriteria}} criteria);
-
-    {{mapPageResultMethod}}
+    {{generatedInternalSearchCriteria}} toCriteria({{generatedExternalSearchCriteria}} criteria);{{mapPageResultMethod}}
 }

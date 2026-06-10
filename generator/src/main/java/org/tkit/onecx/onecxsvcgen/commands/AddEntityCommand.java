@@ -176,7 +176,7 @@ public class AddEntityCommand implements Runnable {
             ctx.put("externalOperationSuffix", "V1");
             ctx.put("externalMapperMappingImport", root ? "import org.mapstruct.Mapping;\n" : "");
             ctx.put("externalMapperPageResultImports", root ? "import " + models.generatedInternalModelPackage(pkg) + "." + entity + "PageResultDTO;\nimport org.tkit.quarkus.jpa.daos.PageResult;\n" : "");
-            ctx.put("mapPageResultMethod", root ? "@Mapping(target = \"removeStreamItem\", ignore = true)\n    " + entity + "PageResultDTO mapPageResult(PageResult<" + entity + "> pageResult);" : "");
+            ctx.put("mapPageResultMethod", root ? "\n    @Mapping(target = \"removeStreamItem\", ignore = true)\n    " + entity + "PageResultDTO mapPageResult(PageResult<" + entity + "> pageResult);" : "");
             ctx.put("modelPackage", models.modelPackage(pkg));
             ctx.put("daoPackage", models.daoPackage(pkg));
             ctx.put("domainServicePackage", models.domainServicePackage(pkg));
