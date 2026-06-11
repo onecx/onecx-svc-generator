@@ -1,0 +1,9 @@
+name: Create Release Version
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    uses: onecx/ci-common/.github/workflows/create-release.yml@v1
+    secrets: inherit

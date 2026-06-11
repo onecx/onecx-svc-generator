@@ -1,0 +1,13 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - '**'
+
+jobs:
+  release:
+    uses: onecx/ci-quarkus/.github/workflows/build-release.yml@v2
+    secrets: inherit
+    with:
+      native: true

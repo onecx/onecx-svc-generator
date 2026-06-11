@@ -1,0 +1,12 @@
+name: Update documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'docs/**'
+
+jobs:
+  release:
+    uses: onecx/ci-common/.github/workflows/documentation.yml@v1
+    secrets: inherit

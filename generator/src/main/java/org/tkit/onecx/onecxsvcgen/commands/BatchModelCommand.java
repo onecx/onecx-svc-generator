@@ -7,6 +7,7 @@ import org.tkit.onecx.onecxsvcgen.service.ModelParserService;
 import org.tkit.onecx.onecxsvcgen.service.NamingService;
 import org.tkit.onecx.onecxsvcgen.service.OpenApiService;
 import org.tkit.onecx.onecxsvcgen.service.TemplateService;
+import org.tkit.onecx.onecxsvcgen.service.GitHubActionsService;
 import jakarta.inject.Inject;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -68,6 +69,9 @@ public class BatchModelCommand implements Runnable {
 
     @Inject
     LiquibaseChangelogService liquibase;
+
+    @Inject
+    GitHubActionsService github;
 
     @Override
     public void run() {
@@ -300,6 +304,7 @@ public class BatchModelCommand implements Runnable {
                             ctx
                     );
                 }
+                github.generate(projectPath, ctx);
             } catch (Exception e) {
                 throw new RuntimeException("batch-model failed while generating entity: " + entityDef.name(), e);
             }

@@ -9,6 +9,7 @@ import org.tkit.onecx.onecxsvcgen.service.ModelParserService;
 import org.tkit.onecx.onecxsvcgen.service.NamingService;
 import org.tkit.onecx.onecxsvcgen.service.OpenApiService;
 import org.tkit.onecx.onecxsvcgen.service.TemplateService;
+import org.tkit.onecx.onecxsvcgen.service.GitHubActionsService;
 import jakarta.inject.Inject;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -105,6 +106,9 @@ public class AddEntityCommand implements Runnable {
 
     @Inject
     LiquibaseChangelogService liquibase;
+
+    @Inject
+    GitHubActionsService github;
 
     @Override
     public void run() {
@@ -372,6 +376,11 @@ public class AddEntityCommand implements Runnable {
                 System.out.println("▶ Build requested, starting Maven build...");
                 buildService.runMavenBuild(projectPath);
             }
+
+            if (!Files.exists(projectPath.resolve(".github"))) {
+                github.generate(projectPath, ctx);
+            }
+
         } catch (Exception e) {
             throw new RuntimeException("add-entity failed", e);
         }
