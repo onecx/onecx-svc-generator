@@ -5,13 +5,13 @@
 
     <groupId>org.tkit.onecx</groupId>
     <artifactId>onecx-svc-generator</artifactId>
-    <version>1.0.0</version>
+    <version>999-SNAPSHOT</version>
     <name>onecx-svc-generator</name>
     <description>Stable JAR-based OneCX SVC generator</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.release>25</maven.compiler.release>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.version>3.32.3</quarkus.platform.version>
@@ -58,7 +58,9 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <goals><goal>build</goal></goals>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
