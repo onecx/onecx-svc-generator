@@ -19,7 +19,6 @@ jobs:
           java-version: '25'
 
       - name: Build generator uber-jar
-        working-directory: generator
         run: mvn -B package -Dquarkus.package.type=uber-jar
 
       - name: Rename jar
