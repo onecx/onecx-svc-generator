@@ -20,9 +20,15 @@ jobs:
 
       - name: Build generator uber-jar
         working-directory: generator
-        run: ./mvnw -B package -Dquarkus.package.type=uber-jar
+        run: mvn -B package -Dquarkus.package.type=uber-jar
+
+      - name: Rename jar
+        run: |
+          cp generator/target/*-runner.jar onecx-svc-generator.jar
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v2
         with:
-          files: generator/target/onecx-svc-generator-*-runner.jar
+          files: onecx-svc-generator.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
