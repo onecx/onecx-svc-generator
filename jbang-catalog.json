@@ -1,9 +1,0 @@
-{
-  "aliases": {
-    "onecx-svc-generator": {
-      "script-ref": "launcher/onecx_svc_generator.java",
-      "main": "onecx_svc_generator",
-      "description": "Launcher for the OneCX SVC generator JAR"
-    }
-  }
-}
