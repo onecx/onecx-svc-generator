@@ -12,6 +12,8 @@ The OneCX Backend Generator is a powerful tool that simplifies the development o
 
 *To clearly explain* how the generator works and the necessary adjustments, this guide uses a practical example: an *application named demo to manage Product*. The *onecx-demo-svc* application allows users to create product in database, with name, price and category.
 
+Repository of onecx-svc-generator:
+https://github.com/onecx/onecx-svc-generator
 
 == Prerequisites
 
