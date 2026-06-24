@@ -10,16 +10,20 @@ include::./../../partials/_glossary.adoc[tag=backend-svc]
 
 [NOTE]
 ====
-The UI App created with the OneCX App Generator is only the base of a functional UI application. 
+The backend created with the OneCX SVC Generator has just the basic structure.
 You will need to further develop and customize the application to meet your specific requirements and business logic.
 ====
 
 
 == Generate a Backend Service (SVC)
 
-The generator supports three flavors of projects: *angular*, *with NgRx* and *without NgRx*. +
-It is **recommended to use the NgRx** flavor, because it leads to better structured projects and the state management is already in place. +
-The creation of a new workspace takes a while, as the generator sets up a complete Angular application with all necessary dependencies and configurations.
+The OneCX SVC Generator creates a Quarkus-based backend service project following the standard OneCX service structure. +
+It generates the basic project setup, application configuration, Maven build configuration, Docker and Helm files, OpenAPI skeleton, and optional GitHub Actions workflow files.
+
+The generator supports creating the initial service project structure first. +
+After that, entities can be added to the generated service project. Entity generation creates the basic persistence and API layers, including JPA entities, DAOs, services, REST controllers, mappers, tests, and Liquibase changelogs.
+
+The creation of a new service project takes a while, as the generator sets up a complete Quarkus application with the required OneCX project structure and configuration.
 
 Releases of generator:
 https://github.com/onecx/onecx-svc-generator/releases
