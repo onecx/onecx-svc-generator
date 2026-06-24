@@ -1,0 +1,80 @@
+ifdef::env-site[]
+include::partial$_attributes.adoc[]
+endif::[]
+:imagesdir: ../../images
+
+= Create an Entity Schema
+
+What is an Entity Schema?::
+ifdef::env-site[]
+include::partial$_glossary.adoc[tag=entity-schema]
+endif::[]
+
+Let's begin by describing the entity that can be managed by generator. Starting this way makes the subsequent steps easier to understand.
+
+[#action-e]
+== ACTION E
+
+Add Entity Schema::
+Second step of generating a backend service is run the generator with `create-schema` command. This command will create the entity schema in OpenAPI file and generate the basic logic for entity including Liquibase changelog, DAOs, controllers, entity mappers and exception mappers. Api is distinguished for external and internal api. You can run the generator with two ways to define it - by a part of command or as a model.yaml file. The first way is to run the generator with following command, where `--resource` flag is used to specify the name of the entity, which will be used as base for entity name and some essential application parts as following:
+
+[source,bash]
+----
+java -jar onecx-svc-generator.jar add-entity \
+  --project ../onecx-demo-svc \
+  --package org.tkit.onecx.demo \
+  --entity Product \
+  --fields name:String,price:BigDecimal \
+  --root true \
+  --build true
+----
+where root flag is used to specify if the entity is root entity, which means that it will be exposed in the API and have its own controller and service. If you want to create a non-root entity, you can omit this flag and it will be created as a nested entity. +
+For non-root entities, you can specify the parent entity using the `--parent` flag. +
+[source,bash]
+----
+java -jar onecx-svc-generator/generator/target/onecx-svc-generator-1.0.0-runner.jar add-entity \
+  --project ../onecx-demo-svc \
+  --package org.tkit.onecx.demo \
+  --entity ProductItem \
+  --fields quantity:Integer,position:Integer \
+  --root false \
+  --api-parent Product \
+  --api-field items \
+  --api-parent-collection true \
+  --build true
+----
+
+Second way is to define the entity in a model.yaml file and run the generator with following command, where `--model` flag is used to specify the path to the model.yaml file. +
+[source,bash]
+----
+java -jar onecx-svc-generator.jar batch-model \
+  --project ../onecx-demo-svc \
+  --package org.tkit.onecx.demo \
+  --model ../onecx-demo-svc/examples/model.yaml \
+  --build true
+----
+example of model.yaml file is provided in the generator repository under `examples` directory. +
+https://github.com/onecx/onecx-svc-generator/blob/main/examples/model.yaml
+[source,yml]
+----
+entities:
+  - name: Category
+    aggregateRoot: false
+    fields:
+      - name:String
+
+  - name: Product
+    aggregateRoot: true
+    fields:
+      - name:String
+      - price:BigDecimal
+    relations:
+      - category:ManyToOne:Category
+----
+In this example, two entities are defined - `Category` and `Product`. `Product` is defined as an aggregate root entity, while `Category` is not. The `Product` entity has two fields - `name` and `price`, while the `Category` entity has one field - `name`. Additionally, a relation is defined between `Product` and `Category`, where a product can belong to one category (ManyToOne relation). Generator is adding relation as annotation, so you can use any relation you want, generator can build relations as below:
+- OneToOne
+- OneToMany
+- ManyToMany
+- ManyToOne
++
+After running the generator with either of the above commands, the entity schema will be added to the OpenAPI file and the basic logic for the entity will be generated. The generated code can be found in the `src/main/java` directory of the generated service. +

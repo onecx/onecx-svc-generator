@@ -1,7 +1,7 @@
 # OneCX SVC Generator
 
 Generator of OneCX-like Quarkus services, based on a custom template engine and OpenAPI generation.
-Java version 21, Quarkus 3.2, OpenAPI Generator 7.0.1.
+Java version 25, Quarkus 3.2, OpenAPI Generator 7.0.1.
 
 ## 1. What it does
 
@@ -11,28 +11,87 @@ Java version 21, Quarkus 3.2, OpenAPI Generator 7.0.1.
 - relies on Maven/OpenAPI generation for REST interfaces and DTOs.
 
 ## 2. structure
+## Project Structure
+
+```text
 onecx-svc-generator/
-├─ generator/
-│  ├─ pom.xml
-│  ├─ src/main/java/io/github/maciejkryger/onecxsvcgen/
-│  │  ├─ Main.java
-│  │  ├─ commands/
-│  │  │  ├─ CreateSvcCommand.java
-│  │  │  ├─ AddEntityCommand.java
-│  │  │  └─ BatchModelCommand.java
-│  │  ├─ service/
-│  │  │  ├─ TemplateService.java
-│  │  │  └─ ModelParserService.java
-│  │  └─ model/
-│  │     ├─ EntityDef.java
-│  │     └─ RelationDef.java
-│  ├─ src/main/resources/templates/
-│  │  ├─ svc-project/
-│  │  └─ entity/
-│  └─ src/test/java/...
-├─ launcher/
-│  └─ onecx_svc_generator.java
-└─ jbang-catalog.json
+├─ .github/
+│  └─ workflows/
+│     └─ release.yml
+├─ examples/
+│  └─ model.yaml
+├─ src/
+│  ├─ main/
+│  │  ├─ java/
+│  │  │  └─ org/tkit/onecx/onecxsvcgen/
+│  │  │     ├─ Main.java
+│  │  │     ├─ commands/
+│  │  │     │  ├─ AddEntityCommand.java
+│  │  │     │  ├─ BatchModelCommand.java
+│  │  │     │  └─ CreateSvcCommand.java
+│  │  │     ├─ model/
+│  │  │     │  ├─ ApiDef.java
+│  │  │     │  ├─ EntityDef.java
+│  │  │     │  ├─ FieldDef.java
+│  │  │     │  └─ RelationDef.java
+│  │  │     └─ service/
+│  │  │        ├─ BuildService.java
+│  │  │        ├─ GitHubActionsService.java
+│  │  │        ├─ LiquibaseChangelogService.java
+│  │  │        ├─ ModelParserService.java
+│  │  │        ├─ NamingService.java
+│  │  │        ├─ OpenApiService.java
+│  │  │        └─ TemplateService.java
+│  │  └─ resources/
+│  │     ├─ application.properties
+│  │     └─ templates/
+│  │        ├─ entity/
+│  │        │  ├─ Controller.java.tpl
+│  │        │  ├─ DAO.java.tpl
+│  │        │  ├─ Entity.java.tpl
+│  │        │  ├─ ExternalController.java.tpl
+│  │        │  ├─ ExternalExceptionMapper.java.tpl
+│  │        │  ├─ ExternalMapper.java.tpl
+│  │        │  ├─ InternalExceptionMapper.java.tpl
+│  │        │  ├─ Liquibase-changelog.xml.tpl
+│  │        │  ├─ Liquibase-changeset.xml.tpl
+│  │        │  ├─ Mapper.java.tpl
+│  │        │  ├─ NonRootDAO.java.tpl
+│  │        │  └─ Service.java.tpl
+│  │        ├─ github/
+│  │        │  ├─ dependabot.yml.tpl
+│  │        │  └─ workflows/
+│  │        │     ├─ build.yml.tpl
+│  │        │     ├─ build-branch.yml.tpl
+│  │        │     ├─ build-pr.yml.tpl
+│  │        │     ├─ build-pr-merge.yml.tpl
+│  │        │     ├─ build-release.yml.tpl
+│  │        │     ├─ create-fix-branch.yml.tpl
+│  │        │     ├─ create-new-build.yml.tpl
+│  │        │     ├─ create-release.yml.tpl
+│  │        │     ├─ documentation.yml.tpl
+│  │        │     ├─ security.yml.tpl
+│  │        │     └─ sonar-pr.yml.tpl
+│  │        ├─ svc-project/
+│  │        │  ├─ Chart.yaml.tpl
+│  │        │  ├─ Dockerfile.jvm.tpl
+│  │        │  ├─ Dockerfile.native.tpl
+│  │        │  ├─ application.properties.tpl
+│  │        │  ├─ gitignore.tpl
+│  │        │  ├─ openapi-skeleton.yaml.tpl
+│  │        │  ├─ pom.xml.tpl
+│  │        │  └─ values.yaml.tpl
+│  │        └─ test/
+│  │           ├─ AbstractTest.java.tpl
+│  │           ├─ ControllerIT.java.tpl
+│  │           ├─ ControllerTest.java.tpl
+│  │           ├─ ExternalControllerIT.java.tpl
+│  │           └─ ExternalControllerTest.java.tpl
+├─ .gitignore
+├─ LICENSE
+├─ pom.xml
+└─ README.md
+```
 
 
 ## 3. Local workflow

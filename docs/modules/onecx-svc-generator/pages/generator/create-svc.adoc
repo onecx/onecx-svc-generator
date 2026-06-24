@@ -1,0 +1,70 @@
+ifdef::env-site[]
+include::partial$_attributes.adoc[]
+endif::[]
+:imagesdir: ../../images
+
+= Create a Backend Service
+
+What is a Backend Service?::
+include::./../../partials/_glossary.adoc[tag=backend-svc]
+
+[NOTE]
+====
+The backend created with the OneCX SVC Generator has just the basic structure.
+You will need to further develop and customize the application to meet your specific requirements and business logic.
+====
+
+
+== Generate a Backend Service (SVC)
+
+The OneCX SVC Generator creates a Quarkus-based backend service project following the standard OneCX service structure. +
+It generates the basic project setup, application configuration, Maven build configuration, Docker and Helm files, OpenAPI skeleton, and optional GitHub Actions workflow files.
+
+The generator supports creating the initial service project structure first. +
+After that, entities can be added to the generated service project. Entity generation creates the basic persistence and API layers, including JPA entities, DAOs, services, REST controllers, mappers, tests, and Liquibase changelogs.
+
+The creation of a new service project takes a while, as the generator sets up a complete Quarkus application with the required OneCX project structure and configuration.
+
+Releases of generator:
+https://github.com/onecx/onecx-svc-generator/releases
+
+.Generate the SVC with following commands
+Download the latest release of the generator from GitHub and save it as `onecx-svc-generator.jar` in your desired directory. +
+[source,bash]
+----
+curl -L -o onecx-svc-generator.jar \
+https://github.com/onecx/onecx-svc-generator/releases/download/v0.1.1/onecx-svc-generator.jar
+----
+Use generator with following command
+[source,bash]
+----
+java -jar onecx-svc-generator.jar create-svc \
+  --name onecx-demo-svc \
+  --group org.tkit.onecx \
+  --package org.tkit.onecx.demo \
+  --build true
+----
+flag `--build true` will build the application after generation. If you want to build it manually, you can omit this flag and run `mvn clean install` in the generated directory.
+flag `--name` is used to specify the name of the generated service, which will be used as base for project name, artifact name and some essential application parts as following:
+flag `--group` is used to specify the groupId of the generated service, which will be used as base for package name and some essential application parts as following:
+flag `--package` is used to specify the base package name of the generated service, which will be used as base for package name and some essential application parts as following
+
+.Excerpt of the build start output (exemplary for *bookstore* application)
+image::start_generating_with_autobuild.png[]
+
+.Excerpt of the build result output (exemplary for *bookstore* application)
+image::result_generating_with_autobuild.png[]
+
+
+The generator creates a new directory with name from flag name and sets up the OneCX basic structure for dao, controller, api and service. +
+Please note that the product name from your command is not used as base of entity names, but it is used as base for some essential application parts as following:
+* `onecx-<name>` +
+  Project name +
+  Remote name for module federation +
+  Helm chart name for deployment and microservice registration in OneCX
+* `org.tkit.onecx.<package>` +
+  Package name for the generated service
+
+
+
+Next step may xref:./create-schema.adoc[create a database schema and api components].
