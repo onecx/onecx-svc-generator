@@ -1,0 +1,7 @@
+* xref:documentation:onecx-svc-generator:index.adoc[Onecx SVC Generator]
+** xref:documentation:onecx-svc-generator:generator/create-svc.adoc[Create Backend]
+
+** xref:documentation:onecx-svc-generator:generator/create-schema.adoc[Review and Customize API Mappings]
+
+** xref:documentation:onecx-svc-generator:generator/glossary.adoc[Glossary]
+
