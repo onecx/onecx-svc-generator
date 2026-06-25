@@ -45,14 +45,17 @@ java -jar onecx-svc-generator.jar create-svc \
   --build true
 ----
 flag `--build true` will build the application after generation. If you want to build it manually, you can omit this flag and run `mvn clean install` in the generated directory.
-flag `--name` is used to specify the name of the generated service, which will be used as base for project name, artifact name and some essential application parts as following:
-flag `--group` is used to specify the groupId of the generated service, which will be used as base for package name and some essential application parts as following:
-flag `--package` is used to specify the base package name of the generated service, which will be used as base for package name and some essential application parts as following
 
-.Excerpt of the build start output (exemplary for *bookstore* application)
+flag `--name` is used to specify the name of the generated service, which will be used as base for project name, artifact name and some essential application parts
+
+flag `--group` is used to specify the groupId of the generated service, which will be used as base for package name and pom as parent groupId
+
+flag `--package` is used to specify the base package name of the generated service, which will be used as base for package name and some essential application parts
+
+.Excerpt of the build start output
 image::start_generating_with_autobuild.png[]
 
-.Excerpt of the build result output (exemplary for *bookstore* application)
+.Excerpt of the build result output
 image::result_generating_with_autobuild.png[]
 
 
@@ -60,7 +63,6 @@ The generator creates a new directory with name from flag name and sets up the O
 Please note that the product name from your command is not used as base of entity names, but it is used as base for some essential application parts as following:
 * `onecx-<name>` +
   Project name +
-  Remote name for module federation +
   Helm chart name for deployment and microservice registration in OneCX
 * `org.tkit.onecx.<package>` +
   Package name for the generated service

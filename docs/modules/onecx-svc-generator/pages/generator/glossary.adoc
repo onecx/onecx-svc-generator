@@ -21,8 +21,3 @@ include::./../../partials/_glossary.adoc[tag=entity]
 == Entity Schema
 include::./../../partials/_glossary.adoc[tag=entity-schema]
 
-
-[#permission]
-== Permission
-include::./../../partials/_glossary.adoc[tag=permission]
-
