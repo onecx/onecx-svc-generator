@@ -8,6 +8,9 @@ endif::[]
 What is a Backend Service?::
 include::./../../partials/_glossary.adoc[tag=backend-svc]
 
+more details about SVC you can find in the link below:
+https://onecx.github.io/docs/documentation/current/docs-guides-quarkus/quarkus-svc.html
+
 [NOTE]
 ====
 The backend created with the OneCX SVC Generator has just the basic structure.
