@@ -1,7 +1,7 @@
 ifdef::env-site[]
 include::partial$_attributes.adoc[]
 endif::[]
-:imagesdir: ../../images
+:imagesdir: ../images
 
 = Glossary
 
@@ -9,15 +9,15 @@ A collection of essential terms and concepts in the context of the *OneCX SVC Ge
 
 [#backend-svc]
 == Backend Service (SVC)
-include::./../../partials/_glossary.adoc[tag=backend-svc]
+include::./../partials/_glossary.adoc[tag=backend-svc]
 
 [#entity]
 [#resource]
 == Entity / Resource
-include::./../../partials/_glossary.adoc[tag=entity]
+include::./../partials/_glossary.adoc[tag=entity]
 
 
 [#entity-schema]
 == Entity Schema
-include::./../../partials/_glossary.adoc[tag=entity-schema]
+include::./../partials/_glossary.adoc[tag=entity-schema]
 

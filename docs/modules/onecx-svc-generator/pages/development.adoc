@@ -1,0 +1,31 @@
+ifdef::env-site[]
+include::partial$_attributes.adoc[]
+endif::[]
+:imagesdir: ../images
+
+= Development: Get the Generator
+
+The following is only required if you want to contribute to the development of the generator or want to use the generator locally without installing it globally from npm. If you just want to use the generator, you can install it globally from npm and skip the following steps.
+
+Repository: https://github.com/onecx/onecx-svc-generator
+
+. Clone the *onecx-svc-generator* repository into a folder on the local machine (e.g. in wsl2)
++
+[source,bash]
+----
+git clone https://github.com/onecx/onecx-svc-generator.git
+----
+
+. Navigate into the cloned repository
++
+[source,bash]
+----
+cd onecx-svc-generator
+----
+
+. Build the Generator
++
+[source,bash]
+----
+mvn clean package -Dquarkus.package.type=uber-jar
+----
