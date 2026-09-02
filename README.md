@@ -1,7 +1,7 @@
-# OneCX SVC Generator
+# OneCX Backend SVC Generator
 
-Generator of OneCX-like Quarkus services, based on a custom template engine and OpenAPI generation.
-Java version 25, Quarkus 3.2, OpenAPI Generator 7.0.1.
+Generator of OneCX-like Quarkus services, based on a custom template engine and OpenAPI generation. +
+Using Java version 25, Quarkus 3.2, OpenAPI Generator 7.0.1.
 
 ## 1. What it does
 
@@ -10,8 +10,7 @@ Java version 25, Quarkus 3.2, OpenAPI Generator 7.0.1.
 - generates controllers + mappers + domain layer,
 - relies on Maven/OpenAPI generation for REST interfaces and DTOs.
 
-## 2. structure
-## Project Structure
+## 2. Project Structure
 
 ```text
 onecx-svc-generator/
@@ -94,11 +93,11 @@ onecx-svc-generator/
 ```
 
 
-## 3. Local workflow
+## 3. Local Workflow
 
-### 3.1. Build the generator
+### 3.1. Build the Generator
 ```bash
-cd cd ../onecx-svc-generator/generator
+cd cd onecx-svc-generator
 mvn clean package -Dquarkus.package.type=uber-jar
 ```
 
@@ -114,7 +113,6 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
 #### with autobuild - recommended for development, as it compiles the generated code after each change:
 ```bash 
 cd ../
-
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc \
   --name onecx-demo-svc \
   --group org.tkit.onecx \
