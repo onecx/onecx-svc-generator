@@ -12,11 +12,13 @@
 :onecx_local_env_setup_ref:       xref:onecx-local-env:setup.adoc[OneCX Local Environment Setup]
 :onecx_local_env_extend_ref:      xref:onecx-local-env:extend/extend.adoc[Extend OneCX]
 :onecx_quarkus_guide_ref:         xref:docs-guides-quarkus:quarkus-svc.adoc[Quarkus SVC Guide]
-
+  
 // External links to general resources
 :onecx_local_env_repo_link:       link:https://github.com/onecx/onecx-local-env[OneCX Local Environment]
 :onecx_local_env_cli_repo_link:   link:https://github.com/onecx/onecx-local-env-cli[OneCX Local Environment CLI]
 :onecx_docs_repo_link:            link:https://github.com/onecx/docs[OneCX Docs]
+:onecx_svc_generator_repo_link:   link:https://github.com/onecx/onecx-svc-generator[OneCX SVC Generator]
+:onecx_svc_generator_releases_link: link:https://github.com/onecx/onecx-svc-generator/releases[OneCX SVC Generator Releases]
 :kiss_principle_link:             link:https://en.wikipedia.org/wiki/KISS_principle[KISS]
 :swagger_editor_link:             link:https://editor.swagger.io/[Swagger Editor]
 :openapi_spec_link:               link:https://spec.openapis.org/oas/[OpenAPI Specification]

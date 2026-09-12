@@ -6,11 +6,11 @@ endif::[]
 
 = OneCX Backend Service Generator
 
-The OneCX Backend Service Generator is a powerful tool that simplifies the development of Backend applications within the OneCX framework. It automates the creation of basic backend structure, a database model and API endpoints, ensuring consistency and adherence to best practices.
+The **OneCX Backend Service Generator** standardizes and accelerates the development of backend microservices within the OneCX framework. It automates the creation of the core project layout, database configurations, and initial API endpoints, ensuring consistency and adherence to architecture best practices across the platform.
 
-*In addition to generation,* significant parts still need to be created or modified manually by the user. Such parts are highlighted in the documentation as *ACTION*. These actions indicate where and what adjustments are necessary to complete the generated code.
+While the generator establishes a fully compliant blueprint, implementing the actual domain-specific business logic requires manual steps. Throughout this documentation, these mandatory development steps are explicitly highlighted as **[ACTION]** indicators to guide you through the necessary code modifications.
 
-*To clearly explain* how the generator works and the necessary adjustments, this guide uses a practical example: an *application to manage Products*. The *onecx-demo-svc* provides an API to create products and their items in a database.
+To demonstrate the end-to-end workflow and the required manual adjustments, this guide walks you through a practical example: a demo product management service. The **onecx-demo-svc** showcases how to expose an API to create, read, and persist products and their related line items in a database.
 
 
 == Prerequisites
@@ -36,133 +36,59 @@ echo $JAVA_HOME
 
 Let's explore the capabilities of the OneCX Backend Service Generator through a practical example, the *Demo*. We will create a simple backend *Product management*, which includes database and API for storing, searching, deleting and update products.
 
-The generator offers two steps of generation. First is about basic structure without any entity, with empty API definition. Second is dedicated to implement basic logic for entity including Liquibase changelog, DAOs, controllers, entity mappers and exception mappers. API is distinguished for external and internal API.
-
 [NOTE]
-Please note that the generator does not create the database itself. You will need to set up a database separately and configure the connection in your application. The generator will create only the necessary database scripts via {liquibase_link} changelogs to set up the required tables and relationships.
+Please note that the generator does not create the database itself. You will need to set up a database separately and configure the connection in your service. The generator will create only the necessary database scripts via {liquibase_link} changelogs to set up the required tables and relationships.
 
-=== Start Generation
-Here is an overview of the application parts that can be generated using the OneCX SVC Generator. Start from top to bottom.
+=== Generate the Service
+Follow the steps below. Start from top to bottom.
 
 * xref:create-svc.adoc[Create Backend Service] <= *start here*
 * xref:create-schema.adoc[Create Entity Schema (and OpenAPI)]
 
 
 [TIP]
-Build the application step by step, roughly following the suggested order above. This iterative approach allows you to understand the structure of the generated code and make necessary adjustments along the way. +
-After generating each part, take the time to review the generated code, run the application, and ensure that everything is working as expected before moving on to the next part. This iterative approach helps in identifying and fixing issues early in the development process, leading to a more robust and maintainable application.
+Build the service step by step, roughly following the suggested order above. This iterative approach allows you to understand the structure of the generated code and make necessary adjustments along the way. +
+After generating each part, take the time to review the generated code, run the service, and ensure that everything is working as expected before moving on to the next part. This iterative approach helps in identifying and fixing issues early in the development process, leading to a more robust and maintainable service.
 
 
-=== Build the App
-After generating the OneCX Backend Service you can build the application manually or use the flag for autobuild. +
-Use the following command to build the application:
+=== Build the Service
+After generating the service you can build the service manually. With the --build option during generation, the service will be built automatically. +
+Use the following command to build the service without running tests (without the `-DskipTests` option then tests are executed):
 
-.Build the application (without running tests)
+.Build the service (without running tests)
 [source,bash]
 ----
 mvn clean package -DskipTests
 ----
 
-=== Test the App
+=== Test the Service
 
-After generating the application and its components, it is crucial to run the tests to ensure that everything works as expected. The generator creates only basic test cases for the generated components. You may need to add further tests or adapt the existing ones to your specific requirements and business logic. +
+After building the service, it is crucial to run the tests to ensure that everything works as expected. The generator creates only basic test cases for the generated components. You may need to add further tests or adapt the existing ones to your specific requirements and business logic. +
 Use the following command to run the tests:
 
-.Test the application
+.Test the service
 [source,bash]
 ----
 mvn test
 ----
-.Excerpt of the test result (exemplary for *demo* application)
-image::test_result.png[]
-.Excerpt of the test coverage (exemplary for *demo* application)
+
+.Excerpt of the test result (exemplary for *demo* service)
+image::test_result.png[width=500]
+.Excerpt of the test coverage (exemplary for *demo* service)
 image::test_coverage.png[]
 
-.Backend Generator Structure
+
+
+
+== Customize Generation using Templates
+If you wish to customize the generated code, you must modify the SVC generator itself. To do this, use the templates located in the `src/main/resources/templates/` directory.
+The generator uses these templates to create the files required for your service.
+
+.List of SVC Generator Files
 [%collapsible]
 ====
-[source,text]
-----
-onecx-svc-generator/
-├─ .github/
-│  └─ workflows/
-│     └─ release.yml
-├─ examples/
-│  └─ model.yaml
-├─ src/
-│  ├─ main/
-│  │  ├─ java/
-│  │  │  └─ org/tkit/onecx/onecxsvcgen/
-│  │  │     ├─ Main.java
-│  │  │     ├─ commands/
-│  │  │     │  ├─ AddEntityCommand.java
-│  │  │     │  ├─ BatchModelCommand.java
-│  │  │     │  └─ CreateSvcCommand.java
-│  │  │     ├─ model/
-│  │  │     │  ├─ ApiDef.java
-│  │  │     │  ├─ EntityDef.java
-│  │  │     │  ├─ FieldDef.java
-│  │  │     │  └─ RelationDef.java
-│  │  │     └─ service/
-│  │  │        ├─ BuildService.java
-│  │  │        ├─ GitHubActionsService.java
-│  │  │        ├─ LiquibaseChangelogService.java
-│  │  │        ├─ ModelParserService.java
-│  │  │        ├─ NamingService.java
-│  │  │        ├─ OpenApiService.java
-│  │  │        └─ TemplateService.java
-│  │  └─ resources/
-│  │     ├─ application.properties
-│  │     └─ templates/
-│  │        ├─ entity/
-│  │        │  ├─ Controller.java.tpl
-│  │        │  ├─ DAO.java.tpl
-│  │        │  ├─ Entity.java.tpl
-│  │        │  ├─ ExternalController.java.tpl
-│  │        │  ├─ ExternalExceptionMapper.java.tpl
-│  │        │  ├─ ExternalMapper.java.tpl
-│  │        │  ├─ InternalExceptionMapper.java.tpl
-│  │        │  ├─ Liquibase-changelog.xml.tpl
-│  │        │  ├─ Liquibase-changeset.xml.tpl
-│  │        │  ├─ Mapper.java.tpl
-│  │        │  ├─ NonRootDAO.java.tpl
-│  │        │  └─ Service.java.tpl
-│  │        ├─ github/
-│  │        │  ├─ renovate.json.tpl
-│  │        │  └─ workflows/
-│  │        │     ├─ build.yml.tpl
-│  │        │     ├─ build-branch.yml.tpl
-│  │        │     ├─ build-pr.yml.tpl
-│  │        │     ├─ build-pr-merge.yml.tpl
-│  │        │     ├─ build-release.yml.tpl
-│  │        │     ├─ create-fix-branch.yml.tpl
-│  │        │     ├─ create-new-build.yml.tpl
-│  │        │     ├─ create-release.yml.tpl
-│  │        │     ├─ documentation.yml.tpl
-│  │        │     ├─ security.yml.tpl
-│  │        │     └─ sonar-pr.yml.tpl
-│  │        ├─ svc-project/
-│  │        │  ├─ Chart.yaml.tpl
-│  │        │  ├─ Dockerfile.jvm.tpl
-│  │        │  ├─ Dockerfile.native.tpl
-│  │        │  ├─ application.properties.tpl
-│  │        │  ├─ gitignore.tpl
-│  │        │  ├─ openapi-skeleton.yaml.tpl
-│  │        │  ├─ pom.xml.tpl
-│  │        │  └─ values.yaml.tpl
-│  │        └─ test/
-│  │           ├─ AbstractTest.java.tpl
-│  │           ├─ ControllerIT.java.tpl
-│  │           ├─ ControllerTest.java.tpl
-│  │           ├─ ExternalControllerIT.java.tpl
-│  │           └─ ExternalControllerTest.java.tpl
-├─ .gitignore
-├─ LICENSE
-├─ pom.xml
-└─ README.md
-----
+include::./_generator-files.adoc[]
 ====
 
-If you need to customize the generated code, you can modify the templates located in `src/main/resources/templates/`. These templates are used by the generator to create the necessary files for your application. +
-For example, if you want to change the structure of the generated controllers, you can edit the `Controller.java.tpl` template file. After making changes to the templates, you can re-run the generator to apply your customizations to the generated code. +
+For example, if you have your own ideas about how to structure the controllers, you can edit the `Controller.java.tpl` template file. After making changes, you have to re-run the generator to apply your customizations to the generated code. +
 This allows you to tailor the generated code to better fit your specific requirements and coding standards while still benefiting from the automation provided by the generator.

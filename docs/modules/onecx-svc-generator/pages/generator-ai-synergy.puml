@@ -1,0 +1,12 @@
+@startuml
+skinparam handwritten false
+skinparam defaultFontName Arial
+
+card "1. OneCX SVC Generator"  #lightgreen as gen
+card "2. Generative AI (LLMs)" #lightblue as ai 
+card "3. Compiled Production Service" as prod
+
+gen -> ai : Establishes compliance rails,\nMaven POMs, and GitOps pipelines
+ai -> prod : Accelerates development\n of specific business logic\n& mappings inside methods
+gen --> prod : Wraps and protects\nwith enterprise-grade\ninfrastructure
+@enduml

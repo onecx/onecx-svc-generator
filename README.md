@@ -3,6 +3,8 @@
 Generator of OneCX-like Quarkus services, based on a custom template engine and OpenAPI generation. +
 Using Java version 25, Quarkus 3.2, OpenAPI Generator 7.0.1.
 
+Refer also the official documentation: https://onecx.github.io/docs/documentation/current/onecx-svc-generator/index.html
+
 ## 1. What it does
 
 - creates a OneCX-like Quarkus service layout,
@@ -106,7 +108,7 @@ mvn clean package -Dquarkus.package.type=uber-jar
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc   \
   --name onecx-demo-svc   \
-  --group-id org.tkit.onecx   \
+  --group org.tkit.onecx   \
   --artifact-id artifact-demo-id   \
   --package org.tkit.onecx.demo
 ```
@@ -115,7 +117,7 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc \
   --name onecx-demo-svc \
-  --group-id org.tkit.onecx \
+  --group org.tkit.onecx \
   --package org.tkit.onecx.demo \
   --build true
 ```
@@ -274,11 +276,11 @@ curl --request POST \
 ## 5. After a release is published:
 ```bash
 curl -L -o onecx-svc-generator.jar \
-https://github.com/onecx/onecx-svc-generator/releases/download/v0.1.1/onecx-svc-generator.jar
+https://github.com/onecx/onecx-svc-generator/releases/download/v0.1.4/onecx-svc-generator.jar
 
 java -jar onecx-svc-generator.jar create-svc \
   --name onecx-demo-svc \
-  --group-id org.tkit.onecx \
+  --group org.tkit.onecx \
   --package org.tkit.onecx.demo \
   --build true
 ```

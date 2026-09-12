@@ -11,6 +11,12 @@ A collection of essential terms and concepts in the context of the *OneCX SVC Ge
 == Backend Service (SVC)
 include::./../partials/_glossary.adoc[tag=backend-svc]
 
+
+[#backend-svc-onecx]
+== Backend Services in OneCX
+include::./../partials/_glossary.adoc[tag=backend-svc-onecx]
+
+
 [#entity]
 [#resource]
 == Entity / Resource

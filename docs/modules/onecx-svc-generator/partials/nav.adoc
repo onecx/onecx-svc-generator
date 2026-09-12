@@ -5,4 +5,6 @@
 
 ** xref:documentation:onecx-svc-generator:glossary.adoc[Glossary]
 
+** xref:documentation:onecx-svc-generator:generator-and-ai.adoc[Generator and AI]
+
 ** xref:documentation:onecx-svc-generator:development.adoc[Development]
