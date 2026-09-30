@@ -31,7 +31,8 @@ public class EntityGenerationService {
                                String scopePrefix,
                                Path internalSpec,
                                Path externalSpec,
-                               EntityDef entityDef) throws Exception {
+                               EntityDef entityDef,
+                               Path templateDir) throws Exception {
         generationLogService.logEntityInput(entityDef);
 
         openApi.addOrUpdateEntity(
@@ -48,7 +49,7 @@ public class EntityGenerationService {
         Path base = projectPath.resolve("src/main/java/" + pkg.replace('.', '/'));
         Path testBase = projectPath.resolve("src/test/java/" + pkg.replace('.', '/'));
 
-        templateWriter.writeEntityFiles(base, testBase, entityDef.name(), entityDef.aggregateRoot(), ctx);
+        templateWriter.writeEntityFiles(base, testBase, entityDef.name(), entityDef.aggregateRoot(), ctx, templateDir);
         parentMapperSyncService.syncParentMappers(projectPath, pkg, entityDef.api());
         generationLogService.logEntityResult(entityDef);
     }

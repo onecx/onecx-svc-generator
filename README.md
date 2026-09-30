@@ -108,16 +108,17 @@ mvn clean package -Dquarkus.package.type=uber-jar
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc   \
   --name onecx-demo-svc   \
-  --group org.tkit.onecx   \
+  --group-id org.tkit.onecx   \
   --artifact-id artifact-demo-id   \
-  --package org.tkit.onecx.demo
+  --package org.tkit.onecx.demo \
+  --template-dir test_templates
 ```
 #### with autobuild - recommended for development, as it compiles the generated code after each change:
 ```bash 
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc \
   --name onecx-demo-svc \
-  --group org.tkit.onecx \
+  --group-id org.tkit.onecx \
   --package org.tkit.onecx.demo \
   --build true
 ```
@@ -166,6 +167,17 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
   --package org.tkit.onecx.demo \
   --model /home/Maciej/projects/onecx/onecx-svc-generator/generator/examples/model.yaml \
   --build true
+``` 
+
+#### with Liquibase diff generation for existing entities - generates changelog with missing tables/columns based on the model definition:
+```bash
+cd ../
+java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar batch-model \
+  --project /home/Maciej/projects/onecx/onecx-demo-svc \
+  --package org.tkit.onecx.demo \
+  --model /home/Maciej/projects/onecx/onecx-svc-generator/generator/examples/model.yaml \
+  --build true \
+  --template-dir test_templates
 ``` 
 
 #### with Liquibase diff generation for existing entities - generates changelog with missing tables/columns based on the model definition:
@@ -280,11 +292,126 @@ https://github.com/onecx/onecx-svc-generator/releases/download/v0.1.4/onecx-svc-
 
 java -jar onecx-svc-generator.jar create-svc \
   --name onecx-demo-svc \
-  --group org.tkit.onecx \
+  --group-id org.tkit.onecx \
   --package org.tkit.onecx.demo \
   --build true
 ```
-## 6. Appeared issues 
+
+## 6. Template Dependencies
+1. Without dependencies
+
+These templates can typically be customized independently without requiring changes to other templates.
+
+Chart.yaml.tpl
+Dockerfile.jvm.tpl
+Dockerfile.native.tpl
+application.properties.tpl
+gitignore.tpl
+openapi-skeleton.yaml.tpl
+pom.xml.tpl
+values.yaml.tpl
+renovate.json.tpl
+workflows/build.yml.tpl
+workflows/build-branch.yml.tpl
+workflows/build-pr.yml.tpl
+workflows/build-pr-merge.yml.tpl
+workflows/build-release.yml.tpl
+workflows/create-fix-branch.yml.tpl
+workflows/create-new-build.yml.tpl
+workflows/create-release.yml.tpl
+workflows/documentation.yml.tpl
+workflows/security.yml.tpl
+workflows/sonar-pr.yml.tpl
+Liquibase-changelog.xml.tpl
+Liquibase-changeset.xml.tpl
+2. With generator dependency
+
+These templates depend only on data provided by the generator (entity metadata, naming conventions, generated OpenAPI artifacts, etc.) and do not require coordination with other templates.
+
+Currently, there are no templates in this category.
+
+3. With generator and other template dependencies
+   Domain Layer
+
+Entity.java.tpl
+(generator) (tmpl:DAO.java.tpl) (tmpl:NonRootDAO.java.tpl) (tmpl:Service.java.tpl) (tmpl:Mapper.java.tpl) (tmpl:ExternalMapper.java.tpl) (tmpl:Controller.java.tpl) (tmpl:ExternalController.java.tpl)
+
+DAO.java.tpl
+(generator) (tmpl:Entity.java.tpl) (tmpl:Service.java.tpl)
+
+NonRootDAO.java.tpl
+(generator) (tmpl:Entity.java.tpl) (tmpl:Service.java.tpl)
+
+Service.java.tpl
+(generator) (tmpl:Entity.java.tpl) (tmpl:DAO.java.tpl) (tmpl:NonRootDAO.java.tpl) (tmpl:Controller.java.tpl) (tmpl:ExternalController.java.tpl)
+
+API Layer
+
+Mapper.java.tpl
+(generator) (tmpl:Entity.java.tpl) (generated:internal-openapi-models) (generated:external-openapi-models)
+
+ExternalMapper.java.tpl
+(generator) (tmpl:Entity.java.tpl) (generated:external-openapi-models)
+
+Controller.java.tpl
+(generator) (tmpl:Service.java.tpl) (tmpl:Mapper.java.tpl) (generated:internal-openapi-api) (generated:internal-openapi-models)
+
+ExternalController.java.tpl
+(generator) (tmpl:Service.java.tpl) (tmpl:ExternalMapper.java.tpl) (generated:external-openapi-api) (generated:external-openapi-models)
+
+InternalExceptionMapper.java.tpl
+(generator) (tmpl:Controller.java.tpl)
+
+ExternalExceptionMapper.java.tpl
+(generator) (tmpl:ExternalController.java.tpl)
+
+Test Layer
+
+AbstractTest.java.tpl
+(generator) (tmpl:ControllerTest.java.tpl) (tmpl:ControllerIT.java.tpl) (tmpl:ExternalControllerTest.java.tpl) (tmpl:ExternalControllerIT.java.tpl)
+
+ControllerTest.java.tpl
+(generator) (tmpl:AbstractTest.java.tpl) (tmpl:Controller.java.tpl) (tmpl:Service.java.tpl)
+
+ControllerIT.java.tpl
+(generator) (tmpl:AbstractTest.java.tpl) (tmpl:Controller.java.tpl)
+
+ExternalControllerTest.java.tpl
+(generator) (tmpl:AbstractTest.java.tpl) (tmpl:ExternalController.java.tpl)
+
+ExternalControllerIT.java.tpl
+(generator) (tmpl:AbstractTest.java.tpl) (tmpl:ExternalController.java.tpl)
+
+Dependency Tags
+(generator) - Depends on generator-provided metadata and generated project structure.
+(tmpl:<template>) - Depends on the contract or structure generated by another template.
+(generated:internal-openapi-api) - Depends on internal OpenAPI-generated API interfaces.
+(generated:external-openapi-api) - Depends on external OpenAPI-generated API interfaces.
+(generated:internal-openapi-models) - Depends on internal OpenAPI-generated DTO/model classes.
+(generated:external-openapi-models) - Depends on external OpenAPI-generated DTO/model classes.
+Recommendation
+Safe standalone overrides
+svc-project/*
+github/*
+Liquibase-changelog.xml.tpl
+Liquibase-changeset.xml.tpl
+Use with caution
+Entity.java.tpl
+DAO.java.tpl
+NonRootDAO.java.tpl
+Service.java.tpl
+Mapper.java.tpl
+ExternalMapper.java.tpl
+Controller.java.tpl
+ExternalController.java.tpl
+InternalExceptionMapper.java.tpl
+ExternalExceptionMapper.java.tpl
+test/*
+
+These templates participate in shared contracts between generated entities, DAOs, services, mappers, controllers, OpenAPI-generated classes and test infrastructure.
+
+
+## 7. Appeared issues 
 
 ### during CreateSvcCommand
 

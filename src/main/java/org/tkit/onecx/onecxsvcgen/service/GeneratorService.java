@@ -38,7 +38,7 @@ public class GeneratorService {
     @Inject
     LatestVersionResolver latestVersionResolver;
 
-    public Path generate(CreateSvcRequest request) throws Exception {
+    public Path generate(CreateSvcRequest request, Path templateDir) throws Exception {
         LatestVersionResolver.ResolvedVersion parentResolved = latestVersionResolver.resolveLatestWithSource(PARENT_REPO, DEFAULT_PARENT_VERSION);
         LatestVersionResolver.ResolvedVersion dockerJvmResolved = latestVersionResolver.resolveLatestWithSource(DOCKER_JVM_REPO, DEFAULT_DOCKER_VERSION);
         LatestVersionResolver.ResolvedVersion dockerNativeResolved = latestVersionResolver.resolveLatestWithSource(DOCKER_NATIVE_REPO, DEFAULT_DOCKER_VERSION);
@@ -80,23 +80,23 @@ public class GeneratorService {
         ctx.put("generatedInternalApiPackage", "gen." + request.pkg() + ".rs.internal");
         ctx.put("generatedInternalModelPackage", "gen." + request.pkg() + ".rs.internal.model");
 
-        templates.renderToFile("templates/svc-project/pom.xml.tpl", root.resolve("pom.xml"), ctx);
-        templates.renderToFile("templates/svc-project/gitignore.tpl", root.resolve(".gitignore"), ctx);
-        templates.renderToFile("templates/svc-project/application.properties.tpl", root.resolve("src/main/resources/application.properties"), ctx);
-        templates.renderToFile("templates/svc-project/Dockerfile.jvm.tpl", root.resolve("src/main/docker/Dockerfile.jvm"), ctx);
-        templates.renderToFile("templates/svc-project/Dockerfile.native.tpl", root.resolve("src/main/docker/Dockerfile.native"), ctx);
-        templates.renderToFile("templates/svc-project/Chart.yaml.tpl", root.resolve("src/main/helm/Chart.yaml"), ctx);
-        templates.renderToFile("templates/svc-project/values.yaml.tpl", root.resolve("src/main/helm/values.yaml"), ctx);
-        templates.renderToFile("templates/entity/Liquibase-changelog.xml.tpl", root.resolve("src/main/resources/db/changeLog.xml"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/pom.xml.tpl", root.resolve("pom.xml"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/gitignore.tpl", root.resolve(".gitignore"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/application.properties.tpl", root.resolve("src/main/resources/application.properties"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/Dockerfile.jvm.tpl", root.resolve("src/main/docker/Dockerfile.jvm"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/Dockerfile.native.tpl", root.resolve("src/main/docker/Dockerfile.native"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/Chart.yaml.tpl", root.resolve("src/main/helm/Chart.yaml"), ctx);
+        templates.renderToFile(templateDir,"templates/svc-project/values.yaml.tpl", root.resolve("src/main/helm/values.yaml"), ctx);
+        templates.renderToFile(templateDir,"templates/entity/Liquibase-changelog.xml.tpl", root.resolve("src/main/resources/db/changeLog.xml"), ctx);
 
         Files.createDirectories(root.resolve("src/main/resources/db/changelog"));
 
-        templates.renderToFile(
+        templates.renderToFile(templateDir,
                 "templates/svc-project/openapi-skeleton.yaml.tpl",
                 root.resolve("src/main/openapi/" + request.name() + "-internal.yaml"),
                 ctx
         );
-        templates.renderToFile(
+        templates.renderToFile(templateDir,
                 "templates/svc-project/openapi-skeleton.yaml.tpl",
                 root.resolve("src/main/openapi/" + request.name() + "-external-v1.yaml"),
                 ctx

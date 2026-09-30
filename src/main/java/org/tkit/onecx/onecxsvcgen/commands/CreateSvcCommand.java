@@ -3,6 +3,7 @@ package org.tkit.onecx.onecxsvcgen.commands;
 import jakarta.inject.Inject;
 import org.tkit.onecx.onecxsvcgen.model.CreateSvcRequest;
 import org.tkit.onecx.onecxsvcgen.service.GeneratorService;
+import org.tkit.onecx.onecxsvcgen.service.TemplateService;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -35,13 +36,24 @@ public class CreateSvcCommand implements Runnable {
     )
     boolean build;
 
+    @Option(
+            names = { "--template-dir" },
+            description = "Directory containing custom template overrides")
+    Path templateDir;
+
     @Inject
     GeneratorService generatorService;
+
+    @Inject
+    TemplateService templates;
 
     @Override
     public void run() {
         try {
-            Path root = generatorService.generate(new CreateSvcRequest(name, groupId, artifactId, pkg, outputDir, build));
+            templates.startTemplateSession(templateDir);
+            Path root = generatorService.generate(
+                    new CreateSvcRequest(name, groupId, artifactId, pkg, outputDir, build), templateDir);
+            templates.printTemplateSummary();
             System.out.println("✔ Generated OneCX service in: " + root.toAbsolutePath());
         } catch (Exception e) {
             throw new RuntimeException("create-svc failed", e);

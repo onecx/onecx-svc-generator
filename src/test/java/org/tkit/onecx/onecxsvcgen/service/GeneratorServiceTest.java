@@ -40,7 +40,7 @@ class GeneratorServiceTest {
                 "org.tkit.onecx.demo",
                 outputDir,
                 false
-        ));
+        ),null);
 
         Map<String, Object> pomCtx = templates.contextByTemplate.get("templates/svc-project/pom.xml.tpl");
         assertEquals("3.2.1", pomCtx.get("parentVersion"));
@@ -86,7 +86,7 @@ class GeneratorServiceTest {
                 "org.tkit.onecx.legacy",
                 outputDir,
                 false
-        ));
+        ), null);
 
         Map<String, Object> pomCtx = templates.contextByTemplate.get("templates/svc-project/pom.xml.tpl");
         assertEquals("release-latest", pomCtx.get("parentVersion"));
@@ -99,7 +99,7 @@ class GeneratorServiceTest {
         private final Map<String, Map<String, Object>> contextByTemplate = new HashMap<>();
 
         @Override
-        public void renderToFile(String resourcePath, Path target, Map<String, ?> ctx) {
+        public void renderToFile(Path templateDir, String resourcePath, Path target, Map<String, ?> ctx) {
             contextByTemplate.put(resourcePath, new HashMap<>(ctx));
         }
     }
@@ -132,6 +132,73 @@ class GeneratorServiceTest {
             Source source = versions.containsKey(ownerAndRepo) ? Source.LATEST : Source.DEFAULT;
             return new ResolvedVersion(value, source);
         }
+    }
+
+    @Test
+    void shouldUseCustomTemplateWhenPresent() throws Exception {
+
+        TemplateService service = new TemplateService();
+
+        Path templateDir = Files.createTempDirectory("templates");
+
+        Path customTemplate = templateDir.resolve("svc-project/pom.xml.tpl");
+
+        Files.createDirectories(customTemplate.getParent());
+
+        Files.writeString(
+                customTemplate,
+                "<custom>{{name}}</custom>"
+        );
+
+        Path target = Files.createTempFile("pom", ".xml");
+
+        service.renderToFile(
+                templateDir,
+                "templates/svc-project/pom.xml.tpl",
+                target,
+                Map.of("name", "demo")
+        );
+
+        String generated = Files.readString(target);
+
+        assertEquals("<custom>demo</custom>", generated);
+    }
+
+    @Test
+    void shouldFallbackToClasspathTemplateWhenCustomTemplateMissing() throws Exception {
+
+        TemplateService service = new TemplateService();
+
+        Path templateDir = Files.createTempDirectory("templates");
+
+        Path target = Files.createTempFile("gitignore", ".txt");
+
+        service.renderToFile(
+                templateDir,
+                "templates/svc-project/gitignore.tpl",
+                target,
+                Map.of()
+        );
+
+        assertTrue(Files.size(target) > 0);
+    }
+
+    @Test
+    void shouldFallbackWhenTemplateDirectoryDoesNotExist() throws Exception {
+
+        TemplateService service = new TemplateService();
+
+        Path target = Files.createTempFile("gitignore", ".txt");
+
+        service.renderToFile(
+                Path.of("/tmp/not-existing-dir"),
+                "templates/svc-project/gitignore.tpl",
+                target,
+                Map.of()
+        );
+
+        assertTrue(Files.exists(target));
+        assertTrue(Files.size(target) > 0);
     }
 }
 
