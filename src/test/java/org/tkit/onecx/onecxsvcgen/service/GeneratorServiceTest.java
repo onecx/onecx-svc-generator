@@ -1,8 +1,15 @@
 package org.tkit.onecx.onecxsvcgen.service;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.tkit.onecx.onecxsvcgen.model.CreateSvcRequest;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -11,9 +18,132 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GeneratorServiceTest {
+
+    @Test
+    void generateCopiesAndEnablesBundledHook(@TempDir Path outputDir) throws Exception {
+        byte[] content = """
+                #!/bin/sh
+                [ -z "${CI:-}" ] && [ -z "${FORCE_CI_COMMIT_HOOKS:-}" ]
+                """.getBytes(StandardCharsets.UTF_8);
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(hookClassLoader(content, original));
+        try {
+            GeneratorService service = new GeneratorService();
+            service.templates = new TemplateService();
+            service.naming = new NamingService();
+            service.liquibase = new LiquibaseChangelogService();
+            service.latestVersionResolver = new StubLatestVersionResolver(Map.of());
+
+            Path root = service.generate(new CreateSvcRequest(
+                    "orders-svc", "org.tkit.onecx", null, "org.tkit.onecx.orders", outputDir, false
+            ), null);
+
+            Path hook = root.resolve(".githooks/pre-commit");
+            assertArrayEquals(content, Files.readAllBytes(hook));
+            assertTrue(Files.isExecutable(hook));
+            ProcessBuilder commit = git(root, "-c", "user.name=Generator Test",
+                    "-c", "user.email=generator-test@example.invalid", "-c", "commit.gpgsign=false",
+                    "commit", "--quiet", "--allow-empty", "-m", "test: verify hook activation",
+                    "-m", "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>");
+            commit.environment().remove("CI");
+            commit.environment().remove("FORCE_CI_COMMIT_HOOKS");
+            assertEquals(0, commit.start().waitFor(), "Local commits should be allowed");
+            commit.environment().put("CI", "true");
+            assertEquals(1, commit.start().waitFor(), "The enabled hook must reject CI commits");
+            commit.environment().remove("CI");
+            commit.environment().put("FORCE_CI_COMMIT_HOOKS", "1");
+            assertEquals(1, commit.start().waitFor(), "The enabled hook must reject forced commits");
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test
+    void hookSetupIsRepeatableAndDoesNotChangeParentRepository(@TempDir Path parent) throws Exception {
+        assertEquals(0, git(parent, "init", "--quiet").start().waitFor());
+        assertEquals(0, git(parent, "config", "--local", "core.hooksPath", "parent-hooks").start().waitFor());
+        Path project = Files.createDirectory(parent.resolve("orders-svc"));
+        byte[] content = "#!/bin/sh\nexit 0\n".getBytes(StandardCharsets.UTF_8);
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(hookClassLoader(content, original));
+        try {
+            GeneratorService service = new GeneratorService();
+            service.writePreCommitHook(project);
+            Files.writeString(project.resolve(".githooks/pre-commit"), "outdated hook");
+            service.writePreCommitHook(project);
+
+            assertArrayEquals(content, Files.readAllBytes(project.resolve(".githooks/pre-commit")));
+            assertTrue(Files.isDirectory(project.resolve(".git")));
+            Process config = git(parent, "config", "--local", "--get", "core.hooksPath")
+                    .redirectOutput(ProcessBuilder.Redirect.PIPE).start();
+            assertEquals("parent-hooks", new String(config.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim());
+            assertEquals(0, config.waitFor());
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test
+    void missingBundledHookWarnsWithoutChangingProject(@TempDir Path project) throws Exception {
+        Path output = project.resolve(".githooks/pre-commit");
+        Files.createDirectories(output.getParent());
+        Files.writeString(output, "existing hook");
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        PrintStream originalErr = System.err;
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        Thread.currentThread().setContextClassLoader(hookClassLoader(null, original));
+        try (PrintStream captured = new PrintStream(errors, true, StandardCharsets.UTF_8)) {
+            System.setErr(captured);
+            new GeneratorService().writePreCommitHook(project);
+
+            assertEquals("existing hook", Files.readString(output));
+            assertFalse(Files.exists(project.resolve(".git")));
+            assertTrue(errors.toString(StandardCharsets.UTF_8).contains("Pre-commit hook not bundled"));
+        } finally {
+            System.setErr(originalErr);
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    @Test
+    void hookSetupReportsGitFailure(@TempDir Path project) throws Exception {
+        Files.writeString(project.resolve(".git"), "invalid git directory");
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(hookClassLoader(
+                "#!/bin/sh\n".getBytes(StandardCharsets.UTF_8), original));
+        try {
+            IOException error = assertThrows(IOException.class,
+                    () -> new GeneratorService().writePreCommitHook(project));
+            assertTrue(error.getMessage().contains("git config --local core.hooksPath .githooks failed"));
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
+    }
+
+    private ClassLoader hookClassLoader(byte[] content, ClassLoader parent) {
+        return new ClassLoader(parent) {
+            @Override
+            public InputStream getResourceAsStream(String name) {
+                if ("hooks/pre-commit".equals(name)) {
+                    return content == null ? null : new ByteArrayInputStream(content);
+                }
+                return super.getResourceAsStream(name);
+            }
+        };
+    }
+
+    private ProcessBuilder git(Path directory, String... arguments) {
+        List<String> command = new ArrayList<>();
+        command.add("git");
+        command.addAll(List.of(arguments));
+        return new ProcessBuilder(command).directory(directory.toFile()).inheritIO();
+    }
 
     @Test
     void generateUsesLatestVersionsInTemplateContext() throws Exception {

@@ -12,6 +12,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Fetch released Maven pre-commit hook
+        env:
+          GH_TOKEN: ${{ secrets.CI_PAT }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag=$(gh release view --repo onecx/onecx-ai-workflows --json tagName --jq '.tagName')
+          echo "Bundling pre-commit hook from onecx/onecx-ai-workflows@$tag"
+          mkdir -p src/main/resources/hooks
+          gh api --method GET \
+            -H 'Accept: application/vnd.github.raw+json' \
+            repos/onecx/onecx-ai-workflows/contents/templates/pre-commit/maven/.githooks/pre-commit \
+            -f ref="$tag" > src/main/resources/hooks/pre-commit
+          test -s src/main/resources/hooks/pre-commit
+          sh -n src/main/resources/hooks/pre-commit
+
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
