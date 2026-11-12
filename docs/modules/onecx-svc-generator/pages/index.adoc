@@ -10,7 +10,7 @@ The **OneCX Backend Service Generator** standardizes and accelerates the develop
 
 While the generator establishes a fully compliant blueprint, implementing the actual domain-specific business logic requires manual steps. Throughout this documentation, these mandatory development steps are explicitly highlighted as **[ACTION]** indicators to guide you through the necessary code modifications.
 
-To demonstrate the end-to-end workflow and the required manual adjustments, this guide walks you through a practical example: a demo product management service. The **onecx-demo-svc** showcases how to expose an API to create, read, and persist products and their related line items in a database.
+To demonstrate the end-to-end workflow and the required manual adjustments, this guide walks you through a practical example: an orders service. The **orders-svc** showcases how to expose an API to create, read, and persist products and their related line items in a database.
 
 
 == Prerequisites

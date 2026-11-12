@@ -34,10 +34,10 @@ class GeneratorServiceTest {
 
         Path outputDir = Files.createTempDirectory("svc-generator-test-");
         Path root = service.generate(new CreateSvcRequest(
-                "onecx-demo-svc",
+                "orders-svc",
                 "org.tkit.onecx",
-                "onecx-demo-svc",
-                "org.tkit.onecx.demo",
+                "orders-svc",
+                "org.tkit.onecx.orders",
                 outputDir,
                 false
         ),null);
@@ -93,6 +93,69 @@ class GeneratorServiceTest {
         assertEquals("quarkus-junit5", pomCtx.get("junitArtifact"));
         assertEquals("quarkus-junit5-mockito", pomCtx.get("junitMockitoArtifact"));
         assertEquals("", pomCtx.get("packagingSection"));
+    }
+
+    @Test
+    void generateUsesCompleteNamesAndPreservesExplicitCoordinates() throws Exception {
+        for (String name : List.of("orders-svc", "onecx-orders-svc", "acme-orders-svc")) {
+            GeneratorService service = new GeneratorService();
+            CapturingTemplateService templates = new CapturingTemplateService();
+            service.templates = templates;
+            service.naming = new NamingService();
+            service.buildService = new NoopBuildService();
+            service.liquibase = new LiquibaseChangelogService();
+            service.latestVersionResolver = new StubLatestVersionResolver(Map.of());
+
+            Path outputDir = Files.createTempDirectory("svc-generator-naming-test-");
+            service.generate(new CreateSvcRequest(
+                    name,
+                    "com.customer",
+                    null,
+                    "com.customer.orders",
+                    outputDir,
+                    false
+            ), null);
+
+            Map<String, Object> pomCtx = templates.contextByTemplate.get("templates/svc-project/pom.xml.tpl");
+            Map<String, Object> applicationCtx = templates.contextByTemplate.get(
+                    "templates/svc-project/application.properties.tpl"
+            );
+            assertEquals(name, pomCtx.get("artifactId"));
+            assertEquals("com.customer", pomCtx.get("groupId"));
+            assertEquals("com.customer.orders", pomCtx.get("package"));
+            assertEquals(name, applicationCtx.get("name"));
+            assertEquals(name, applicationCtx.get("artifactId"));
+            assertEquals(name.replace("-", "_"), applicationCtx.get("dbName"));
+        }
+    }
+
+    @Test
+    void generatePreservesExplicitArtifactId() throws Exception {
+        GeneratorService service = new GeneratorService();
+        CapturingTemplateService templates = new CapturingTemplateService();
+        service.templates = templates;
+        service.naming = new NamingService();
+        service.buildService = new NoopBuildService();
+        service.liquibase = new LiquibaseChangelogService();
+        service.latestVersionResolver = new StubLatestVersionResolver(Map.of());
+
+        service.generate(new CreateSvcRequest(
+                "orders-svc",
+                "com.customer",
+                "customer-orders",
+                "com.customer.orders",
+                Files.createTempDirectory("svc-generator-artifact-test-"),
+                false
+        ), null);
+
+        Map<String, Object> pomCtx = templates.contextByTemplate.get("templates/svc-project/pom.xml.tpl");
+        Map<String, Object> applicationCtx = templates.contextByTemplate.get(
+                "templates/svc-project/application.properties.tpl"
+        );
+        assertEquals("customer-orders", pomCtx.get("artifactId"));
+        assertEquals("customer-orders", applicationCtx.get("artifactId"));
+        assertEquals("com.customer", pomCtx.get("groupId"));
+        assertEquals("com.customer.orders", pomCtx.get("package"));
     }
 
     private static final class CapturingTemplateService extends TemplateService {

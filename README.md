@@ -107,21 +107,22 @@ mvn clean package -Dquarkus.package.type=uber-jar
 ```bash
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc   \
-  --name onecx-demo-svc   \
+  --name orders-svc   \
   --group-id org.tkit.onecx   \
-  --artifact-id artifact-demo-id   \
-  --package org.tkit.onecx.demo \
+  --package org.tkit.onecx.orders \
   --template-dir test_templates
 ```
 #### with autobuild - recommended for development, as it compiles the generated code after each change:
 ```bash 
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar create-svc \
-  --name onecx-demo-svc \
+  --name orders-svc \
   --group-id org.tkit.onecx \
-  --package org.tkit.onecx.demo \
+  --package org.tkit.onecx.orders \
   --build true
 ```
+
+`--name` is the complete application identity; the generator does not add an `onecx-` prefix. To retain a legacy identity, pass it explicitly (for example, `--name onecx-orders-svc --artifact-id onecx-orders-svc`). Other explicit prefixes such as `acme-orders-svc` are also used as given. The default Maven group remains `org.tkit.onecx`; explicit `--group-id` and `--package` values are preserved.
 
 **Note on Versions:**
 The generator automatically resolves the latest versions from GitHub for:
@@ -136,8 +137,8 @@ If GitHub API is unavailable, sensible defaults are used. The resolved versions 
 ```bash
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar add-entity \
-  --project /home/Maciej/projects/onecx/onecx-demo-svc \
-  --package org.tkit.onecx.demo \
+  --project /home/Maciej/projects/onecx/orders-svc \
+  --package org.tkit.onecx.orders \
   --entity Product \
   --fields name:String,price:BigDecimal \
   --root true \
@@ -148,8 +149,8 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
 ```bash
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar add-entity \
-  --project /home/Maciej/projects/onecx/onecx-demo-svc \
-  --package org.tkit.onecx.demo \
+  --project /home/Maciej/projects/onecx/orders-svc \
+  --package org.tkit.onecx.orders \
   --entity ProductItem \
   --fields quantity:Integer,position:Integer \
   --root false \
@@ -163,9 +164,9 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
 ```bash
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar batch-model \
-  --project /home/Maciej/projects/onecx/onecx-demo-svc \
-  --package org.tkit.onecx.demo \
-  --model /home/Maciej/projects/onecx/onecx-svc-generator/generator/examples/model.yaml \
+  --project /home/Maciej/projects/onecx/orders-svc \
+  --package org.tkit.onecx.orders \
+  --model /home/Maciej/projects/onecx/onecx-svc-generator/examples/model.yaml \
   --build true
 ``` 
 
@@ -173,9 +174,9 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
 ```bash
 cd ../
 java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar batch-model \
-  --project /home/Maciej/projects/onecx/onecx-demo-svc \
-  --package org.tkit.onecx.demo \
-  --model /home/Maciej/projects/onecx/onecx-svc-generator/generator/examples/model.yaml \
+  --project /home/Maciej/projects/onecx/orders-svc \
+  --package org.tkit.onecx.orders \
+  --model /home/Maciej/projects/onecx/onecx-svc-generator/examples/model.yaml \
   --build true \
   --template-dir test_templates
 ``` 
@@ -184,16 +185,16 @@ java -jar onecx-svc-generator/target/onecx-svc-generator-999-SNAPSHOT-runner.jar
 ```bash
 cd ../
 java -jar /home/Maciej/projects/onecx/onecx-svc-generator-official-repo/target/onecx-svc-generator-999-SNAPSHOT-runner.jar batch-model \
-  --project /home/Maciej/projects/onecx/onecx-demo-svc \
-  --package org.tkit.onecx.demo \
-  --model /home/Maciej/projects/onecx/onecx-svc-generator/generator/examples/model.yaml \
+  --project /home/Maciej/projects/onecx/orders-svc \
+  --package org.tkit.onecx.orders \
+  --model /home/Maciej/projects/onecx/onecx-svc-generator/examples/model.yaml \
   --liquibase-diff true \
   --build true
 ``` 
 
 ### 3.6. Build the generated service
 ```bash
-cd ../onecx-demo-svc
+cd ../orders-svc
 mvn clean package
 ```
 
@@ -202,7 +203,7 @@ The hand-written controllers and mappers already reference those classes and com
 
 ### 3.7. Run the generated and built service
 ```bash
-cd ../onecx-demo-svc
+cd ../orders-svc
 mvn quarkus:dev
 ```
 ### 3.8. Welcome Quarkus page
@@ -291,9 +292,9 @@ curl -L -o onecx-svc-generator.jar \
 https://github.com/onecx/onecx-svc-generator/releases/download/v0.1.4/onecx-svc-generator.jar
 
 java -jar onecx-svc-generator.jar create-svc \
-  --name onecx-demo-svc \
+  --name orders-svc \
   --group-id org.tkit.onecx \
-  --package org.tkit.onecx.demo \
+  --package org.tkit.onecx.orders \
   --build true
 ```
 
@@ -415,7 +416,7 @@ These templates participate in shared contracts between generated entities, DAOs
 
 ### during CreateSvcCommand
 
-[INFO] --- quarkus:3.27.1:build (default) @ onecx-demo2-svc ---
+[INFO] --- quarkus:3.27.1:build (default) @ orders-svc ---
 java.lang.RuntimeException: create-svc failed
 at org.tkit.onecx.onecxsvcgen.commands.CreateSvcCommand.run(CreateSvcCommand.java:118)
 at picocli.CommandLine.executeUserObject(CommandLine.java:2045)
@@ -432,7 +433,7 @@ at io.quarkus.runtime.ApplicationLifecycleManager.run(ApplicationLifecycleManage
 at io.quarkus.runtime.Quarkus.run(Quarkus.java:79)
 at io.quarkus.runtime.Quarkus.run(Quarkus.java:50)
 at io.quarkus.runner.GeneratedMain.main(Unknown Source)
-Caused by: java.lang.RuntimeException: Failed to run Maven build in: /home/Maciej/projects/onecx/onecx-demo2-svc
+Caused by: java.lang.RuntimeException: Failed to run Maven build in: /home/Maciej/projects/onecx/orders-svc
 at org.tkit.onecx.onecxsvcgen.service.BuildService.runMaven(BuildService.java:56)
 at org.tkit.onecx.onecxsvcgen.service.BuildService.runMavenBuild(BuildService.java:15)
 at org.tkit.onecx.onecxsvcgen.service.BuildService_ClientProxy.runMavenBuild(Unknown Source)

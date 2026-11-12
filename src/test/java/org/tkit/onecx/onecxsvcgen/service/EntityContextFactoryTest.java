@@ -19,8 +19,8 @@ class EntityContextFactoryTest {
         factory.models = new ModelParserService();
 
         Map<String, Object> ctx = factory.buildContext(
-                "onecx-demo-svc",
-                "org.tkit.onecx.demo",
+                "orders-svc",
+                "org.tkit.onecx.orders",
                 "ocx-demo",
                 new EntityDef("Product", true, new ApiDef(true, null, null, false, null, null), List.of(), List.of())
         );

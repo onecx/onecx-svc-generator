@@ -12,7 +12,7 @@ import java.nio.file.Path;
 @Command(name = "create-svc", description = "Generate a full OneCX-compliant Quarkus backend service")
 public class CreateSvcCommand implements Runnable {
 
-    @Option(names = "--name", required = true, description = "Project/repository name, e.g. onecx-demo-svc")
+    @Option(names = "--name", required = true, description = "Complete project/repository name, e.g. orders-svc")
     String name;
 
     @Option(names = { "--group-id" }, defaultValue = "org.tkit.onecx", description = "Maven groupId")

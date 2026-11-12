@@ -43,11 +43,13 @@ The creation of a new service project takes a while.
 [source,bash]
 ----
 java -jar onecx-svc-generator.jar create-svc \
-  --name onecx-demo-svc \
-  --group org.tkit.onecx \
-  --package org.tkit.onecx.demo \
+  --name orders-svc \
+  --group-id com.acme \
+  --package com.acme.orders \
   --build true
 ----
+
+`--name` is a complete application identity. Names are used as supplied and are never automatically prefixed with `onecx-`. To keep a legacy identity, pass it explicitly, for example `--name onecx-orders-svc --artifact-id onecx-orders-svc`. Explicit custom prefixes such as `acme-orders-svc` are also supported. The default Maven `groupId` remains `org.tkit.onecx`; explicitly supplied Maven coordinates and Java packages, including customer values, are preserved.
 
 [IMPORTANT]
 ====
@@ -68,7 +70,7 @@ If GitHub API is unavailable, well-tested default versions are used as fallback.
 |Option |Description
 
 |`--name`
-|Specifies the generated project name of the service. The value is used also +
+|Specifies the complete generated project name of the service; no application prefix is added automatically. The value is used also +
 * for the name of the generated project directory, if `--output-dir` is omitted +
 * for Maven `artifactId`, if `--artifact-id` is not provided +
 * for project-level names such as OpenAPI file names, application metadata, Helm-related project names and generated project structure.
